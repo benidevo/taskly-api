@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # local apps
     'users',
     'house',
+    'task',
 ]
 
 MIDDLEWARE = [
