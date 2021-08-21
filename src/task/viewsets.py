@@ -1,7 +1,8 @@
 from django.utils import timezone
 from rest_framework import status as S
+from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import viewsets, mixins, response
+from rest_framework import viewsets, mixins, response, filters
 from rest_framework.decorators import action
 
 from task.serializers import AttachmentSerializer, TaskListSerializer, TaskSerializer
@@ -18,6 +19,9 @@ class TaskListViewSet(mixins.CreateModelMixin,
   permission_classes = (IsAllowedToEditTaskListElseNone,)
   queryset = TaskList.objects.all()
   serializer_class = TaskListSerializer
+  filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+  search_fields = ['name', 'status']
+  filterset_fields = ['status',]
 
 
 class TaskViewSet(viewsets.ModelViewSet):
