@@ -13,7 +13,7 @@ The following technologies were used in this project:
 
 ## Requirements
 
-Before starting, you need to have [Git](https://git-scm.com) and [Python](https://www.python.org/)installed. Alternatively, you can download the code as a zip file
+Before starting, you need to have [Git](https://git-scm.com) and [Python](https://www.python.org/) installed. Alternatively, you can download the code as a zip file
 
 ## Clone this project
 
