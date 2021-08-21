@@ -1,8 +1,12 @@
-from rest_framework import viewsets, mixins
+from django.utils import timezone
+from rest_framework import status as S
+
+from rest_framework import viewsets, mixins, response
+from rest_framework.decorators import action
 
 from task.serializers import AttachmentSerializer, TaskListSerializer, TaskSerializer
 
-from task.models import Task, TaskList, Attachment
+from task.models import COMPLETE, NOT_COMPLETE, Task, TaskList, Attachment
 
 from task.permissions import IsAllowedToEditTaskListElseNone, IsAllowedToEditTaskElseNone, IsAllowedToEditAttachmentElseNone
 
@@ -26,6 +30,34 @@ class TaskViewSet(viewsets.ModelViewSet):
     user_profile = self.request.profile
     updated_queryset = queryset.filter(created_by=user_profile)
     return updated_queryset
+
+  @action(detail=True, methods=['patch'])
+  def update_task_status(self, request, pk=None):
+    try:
+      task = self.get_object()
+      profile = request.user.profile
+      status = request.data['status']
+      if (status == NOT_COMPLETE):
+        if (task.status == COMPLETE):
+          task.status = NOT_COMPLETE
+          task.completed_on = None
+          task.completed_by = None
+        else:
+          raise Exception('Task is already marked as not complete')
+      elif (status == COMPLETE):
+        if (task.status == NOT_COMPLETE):
+          task.status = COMPLETE
+          task.completed_on = timezone.now()
+          task.completed_by = profile
+        else:
+          raise Exception('Task is already marked as not complete')
+      else:
+        raise Exception('Incorrect status provided')
+      task.save()
+      serializer = TaskSerializer(instance=task, context={'request': request})
+      return response.Response(serializer.data, status=S.HTTP_200_OK)    
+    except Exception as e:
+      return response.Response({'detail' : str(e)}, status=S.HTTP_200_OK)
 
 
 class AttachmentViewSet(mixins.CreateModelMixin, 
