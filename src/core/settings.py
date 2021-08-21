@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-from telnetlib import AUTHENTICATION
+from google.oauth2 import service_account
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -158,5 +158,10 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = '/media/'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+GS_BUCKET_NAME = 'prod_tasklyapi'
+GS_FILE_OVERWRITE = True
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file('talky-api-4d00fad2a7db.json')
